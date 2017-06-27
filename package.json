@@ -1,0 +1,23 @@
+{
+  "name": "anorexia",
+  "version": "0.1.0",
+  "description": "An experimental automation tool",
+  "main": "dist/anorexia.js",
+  "repository": "git@github.com:trotyl/anorexia.git",
+  "author": "Trotyl <trotyl@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p ."
+  },
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "shelljs": "^0.7.8",
+    "tslib": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.66",
+    "@types/node": "^8.0.3",
+    "@types/shelljs": "^0.7.2",
+    "typescript": "^2.3.4"
+  }
+}
