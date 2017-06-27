@@ -38,6 +38,12 @@ export class Environment {
     }
   }
 
+  assertPatternInText(text: string, pattern: RegExp): void {
+    if (!pattern.test(text)) {
+      throw new Error(`${pattern} not found, the text is: ${text}`)
+    }
+  }
+
   cd(dir: string): void {
     shell.cd(dir)
   }
