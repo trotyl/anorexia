@@ -5,10 +5,25 @@ import * as _ from 'lodash'
 
 const ENCODING = 'utf8'
 
+export interface PlatformServerOptions {
+  modulePath: string,
+  moduleName: string,
+  componentPath: string,
+  componentName: string,
+  htmlPath: string,
+}
+
 export class Environment {
-  prefix: string = ''
+  private prefix: string = ''
+  private platformServerOptions: PlatformServerOptions | null = null
 
   constructor(private fixture: string, private workspace: string) { }
+
+  appendFile(filepath: string, text: string): void {
+    const content = this.getWorkspaceFile(filepath)
+    const updatedContent = content + '\n' + text
+    this.setWorkspaceFile(filepath, updatedContent)
+  }
 
   assertFileExists(filepath: string): void {
     const absoluteFilepath = path.join(this.workspace, this.prefix, filepath)
@@ -62,12 +77,27 @@ export class Environment {
     this.removeFiles(...srcSet)
   }
 
-  replaceInFile(filepath: string, ...tuples: [string | RegExp, string][]): void {
+  renderToHtml(): Promise<string> {
+    if (!this.platformServerOptions) {
+      throw new Error('PlatformServerOptions is not provided!')
+    }
+    const { modulePath, moduleName, componentPath, componentName, htmlPath } = this.platformServerOptions
+    const serverModuleTemplate = this.getProjectFile('server.module.js')
+    const serverModuleContent = this.replaceContent(serverModuleTemplate,
+      [/MODULE_PATH_PLACEHOLDER/g, `./${modulePath}`],
+      [/MODULE_NAME_PLACEHOLDER/g, moduleName],
+      [/COMPONENT_PATH_PLACEHOLDER/g, `./${componentPath}`],
+      [/COMPONENT_NAME_PLACEHOLDER/g, componentName],
+      [/HTML_PATH_PLACEHOLDER/g, htmlPath],
+    )
+    this.setWorkspaceFile('__server.module.js', serverModuleContent)
+    const { result } = this.executeWorkspaceFile('__server.module.js')
+    return result
+  }
+
+  replaceInFile(filepath: string, ...replacements: [string | RegExp, string][]): void {
     const content = this.getWorkspaceFile(filepath)
-    let res = content
-    tuples.forEach(([from, to]) => {
-      res = res.replace(from as any, to)
-    })
+    const res = this.replaceContent(content, ...replacements)
     this.setWorkspaceFile(filepath, res)
   }
 
@@ -84,9 +114,31 @@ export class Environment {
     this.prefix = prefix
   }
 
+  usePlatformServer(options: PlatformServerOptions) {
+    this.platformServerOptions = options
+  }
+
+  private executeWorkspaceFile(filepath: string): any {
+    const absoluteFilepath = path.join(this.workspace, this.prefix, filepath)
+    return require(absoluteFilepath)
+  }
+
+  private getProjectFile(filepath: string): string {
+    const absoluteFilepath = path.join(__dirname, '../fixtures', filepath)
+    return fs.readFileSync(absoluteFilepath, ENCODING)
+  }
+
   private getWorkspaceFile(filepath: string): string {
     const absoluteFilepath = path.join(this.workspace, this.prefix, filepath)
     return fs.readFileSync(absoluteFilepath, ENCODING)
+  }
+
+  private replaceContent(content: string, ...replacements: [string | RegExp, string][]): string {
+    let res = content
+    replacements.forEach(([from, to]) => {
+      res = res.replace(from as any, to)
+    })
+    return res
   }
 
   private setWorkspaceFile(filepath: string, data: string): void {
