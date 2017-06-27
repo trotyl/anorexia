@@ -160,8 +160,10 @@ export class Environment {
 }
 
 export async function stage(name: string, task: Task): Promise<void> {
-  shell.echo(name)
-  dispatcher = dispatcher.then(() => task())
+  dispatcher = dispatcher.then(() => {
+    shell.echo(name)
+    return task()
+  })
   return await dispatcher
 }
 
