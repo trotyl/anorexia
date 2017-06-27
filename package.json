@@ -3,7 +3,7 @@
   "version": "0.1.2",
   "description": "An experimental automation tool",
   "main": "dist/anorexia.js",
-  "repository": "git@github.com:trotyl/anorexia.git",
+  "repository": "https://github.com/trotyl/anorexia.git",
   "author": "Trotyl <trotyl@qq.com>",
   "license": "MIT",
   "scripts": {
