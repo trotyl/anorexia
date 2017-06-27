@@ -5,12 +5,18 @@ import * as _ from 'lodash'
 
 const ENCODING = 'utf8'
 
+let dispatcher: Promise<void> = Promise.resolve()
+
 export interface PlatformServerOptions {
   modulePath: string,
   moduleName: string,
   componentPath: string,
   componentName: string,
   htmlPath: string,
+}
+
+export interface Task {
+  (): Promise<void> | void
 }
 
 export class Environment {
@@ -147,12 +153,13 @@ export class Environment {
   }
 }
 
-export function stage(name: string, task: () => void): void {
+export async function stage(name: string, task: Task): Promise<void> {
   shell.echo(name)
-  task()
+  dispatcher = dispatcher.then(() => task())
+  return await dispatcher
 }
 
-export function playbook(name: string, task: (env: Environment) => void, dirname: string): void {
+export async function playbook(name: string, task: (env: Environment) => Promise<void> | void, dirname: string): Promise<void> {
   shell.echo(`Starting playbook for ${name}`)
 
   const WORKSPACE_ROOT = '/tmp/workspaces'
@@ -166,6 +173,6 @@ export function playbook(name: string, task: (env: Environment) => void, dirname
 
   const FIXTURE_DIR= path.join(dirname, 'fixtures')
 
-  task(new Environment(FIXTURE_DIR, WORKSPACE_DIR))
+  await task(new Environment(FIXTURE_DIR, WORKSPACE_DIR))
   shell.echo('Playbook passed')
 }
