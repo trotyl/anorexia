@@ -2,3 +2,57 @@
 
 # anorexia
 An experimental automation tool
+
+This project is separated from [learn angular the hard way](https://github.com/trotyl/learn-angular), acting as an automation tool to mimic the human behaviours.
+
+## Usage
+
+```typescript
+// playbook.ts
+import { playbook, stage } from 'anorexia'
+
+playbook('playbook-name', (env) => {
+  
+  stage('installing dependencies example', () => {
+    env.install()
+  })
+
+  stage('creating files example', () => {
+    // Copy files from ./fixtures to WORKSPACE
+    env.setUpFiles({
+      'main.ts': 'src/main.ts',
+      'tsconfig.json': 'tsconfig.json',
+      'package.json': 'package.json',
+    })
+  })
+
+  stage('building example', () => {
+    env.exec('tsc -p .')
+  })
+
+  stage('verifying example', () => {
+    env.assertFileExists('dist/main.js')
+  })
+
+  stage('modifying example', () => {
+    env.removeFiles('dist/main.js')
+    env.modifyJson('tsconfig.json', {
+      compilerOptions: {
+        outDir: 'target'
+      }
+    })
+  })
+
+  stage('verifying example', () => {
+    env.assertFileExists('target/main.js')
+  })
+
+  stage('Modifying main.js', () => {
+    env.replaceInFile('dist/main.js',
+      [`environment.production`, 'true'],
+      [`debugger`, ''],
+    )
+  })
+
+}, __dirname)
+```
