@@ -47,7 +47,7 @@ playbook('playbook-name', (env) => {
     env.assertFileExists('target/main.js')
   })
 
-  stage('Modifying main.js', () => {
+  stage('replacing example', () => {
     env.replaceInFile('dist/main.js',
       [`environment.production`, 'true'],
       [`debugger`, ''],
