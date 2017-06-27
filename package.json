@@ -1,6 +1,6 @@
 {
   "name": "anorexia",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "An experimental automation tool",
   "main": "dist/anorexia.js",
   "repository": "https://github.com/trotyl/anorexia.git",
