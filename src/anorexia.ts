@@ -45,7 +45,7 @@ export class Environment {
     this.setWorkspaceFile(filepath, modifiedJson)
   }
 
-  removeFiles(list: string[]): void {
+  removeFiles(...list: string[]): void {
     list.forEach(filepath => {
       const fullPath = path.join(this.workspace, this.prefix, filepath)
       fs.unlinkSync(fullPath)
@@ -59,7 +59,7 @@ export class Environment {
       const absoluteDist = path.join(this.workspace, this.prefix, hash[src])
       fs.writeFileSync(absoluteDist, fs.readFileSync(absoluteSrc, ENCODING))
     })
-    this.removeFiles(srcSet)
+    this.removeFiles(...srcSet)
   }
 
   replaceInFile(filepath: string, ...tuples: [string | RegExp, string][]): void {
