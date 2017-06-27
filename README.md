@@ -1,7 +1,7 @@
 [![Travis](https://img.shields.io/travis/trotyl/anorexia.svg)](https://travis-ci.org/trotyl/anorexia)
 
 # anorexia
-An experimental automation tool
+An experimental automation tool for Angular
 
 This project is separated from [learn angular the hard way](https://github.com/trotyl/learn-angular), acting as an automation tool to mimic the human behaviours.
 
@@ -11,7 +11,7 @@ This project is separated from [learn angular the hard way](https://github.com/t
 // playbook.ts
 import { playbook, stage } from 'anorexia'
 
-playbook('playbook-name', (env) => {
+playbook('playbook-name', async (env) => {
   
   stage('installing dependencies example', () => {
     env.install()
@@ -52,6 +52,12 @@ playbook('playbook-name', (env) => {
       [`environment.production`, 'true'],
       [`debugger`, ''],
     )
+  })
+
+  await stage('verifying Angular app example', () => {
+    const html = await env.renderToHtml()
+    env.assertPatternInText(html, /Hello Angular/)
+    env.echo('app works!')
   })
 
 }, __dirname)
