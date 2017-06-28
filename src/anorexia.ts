@@ -26,9 +26,9 @@ export class Environment {
   constructor(private fixture: string, private workspace: string) { }
 
   appendFile(filepath: string, text: string): void {
-    const content = this.getWorkspaceFile(filepath)
+    const content = this.readWorkspaceFile(filepath)
     const updatedContent = content + '\n' + text
-    this.setWorkspaceFile(filepath, updatedContent)
+    this.writeWorkspaceFile(filepath, updatedContent)
   }
 
   cd(dir: string): void {
@@ -44,8 +44,7 @@ export class Environment {
   }
 
   fileExists(filepath: string): boolean {
-    const absoluteFilepath = path.join(this.workspace, this.prefix, filepath)
-    return fs.existsSync(absoluteFilepath)
+    return fs.existsSync(this.locateWorkspaceFile(filepath))
   }
 
   install(...deps: string[]): void {
@@ -57,25 +56,24 @@ export class Environment {
   }
 
   modifyJson(filepath: string, partial: Object): void {
-    const json = this.getWorkspaceFile(filepath)
+    const json = this.readWorkspaceFile(filepath)
     const originalObj = JSON.parse(json)
     const modifiedObj = _.merge(originalObj, partial)
     const modifiedJson = JSON.stringify(modifiedObj)
-    this.setWorkspaceFile(filepath, modifiedJson)
+    this.writeWorkspaceFile(filepath, modifiedJson)
   }
 
   removeFiles(...list: string[]): void {
     list.forEach(filepath => {
-      const fullPath = path.join(this.workspace, this.prefix, filepath)
-      fs.unlinkSync(fullPath)
+      fs.unlinkSync(this.locateWorkspaceFile(filepath))
     })
   }
 
   renameFiles(hash: { [src: string]: string }): void {
     const srcSet = Object.keys(hash)
     srcSet.forEach(src => {
-      const absoluteSrc = path.join(this.workspace, this.prefix, src)
-      const absoluteDist = path.join(this.workspace, this.prefix, hash[src])
+      const absoluteSrc = this.locateWorkspaceFile(src)
+      const absoluteDist = this.locateWorkspaceFile(hash[src])
       fs.writeFileSync(absoluteDist, fs.readFileSync(absoluteSrc, ENCODING))
     })
     this.removeFiles(...srcSet)
@@ -86,7 +84,7 @@ export class Environment {
       throw new Error('PlatformServerOptions is not provided!')
     }
     const { modulePath, moduleName, componentPath, componentName, htmlPath } = this.platformServerOptions
-    const serverModuleTemplate = this.getProjectFile('server.module.js')
+    const serverModuleTemplate = this.readProjectFile('server.module.js')
     const serverModuleContent = this.replaceContent(serverModuleTemplate,
       [/MODULE_PATH_PLACEHOLDER/g, `./${modulePath}`],
       [/MODULE_NAME_PLACEHOLDER/g, moduleName],
@@ -94,22 +92,22 @@ export class Environment {
       [/COMPONENT_NAME_PLACEHOLDER/g, componentName],
       [/HTML_PATH_PLACEHOLDER/g, htmlPath],
     )
-    this.setWorkspaceFile('__server.module.js', serverModuleContent)
+    this.writeWorkspaceFile('__server.module.js', serverModuleContent)
     const { result } = this.executeWorkspaceFile('__server.module.js')
     return result
   }
 
   replaceInFile(filepath: string, ...replacements: [string | RegExp, string][]): void {
-    const content = this.getWorkspaceFile(filepath)
+    const content = this.readWorkspaceFile(filepath)
     const res = this.replaceContent(content, ...replacements)
-    this.setWorkspaceFile(filepath, res)
+    this.writeWorkspaceFile(filepath, res)
   }
 
   setUpFiles(hash: { [src: string]: string }): void {
     Object.keys(hash)
       .forEach(src => {
         const absoluteSrc = path.join(this.fixture, src)
-        const absoluteDist = path.join(this.workspace, this.prefix, hash[src])
+        const absoluteDist = this.locateWorkspaceFile(hash[src])
         fs.writeFileSync(absoluteDist, fs.readFileSync(absoluteSrc))
       })
   }
@@ -123,18 +121,20 @@ export class Environment {
   }
 
   private executeWorkspaceFile(filepath: string): any {
-    const absoluteFilepath = path.join(this.workspace, this.prefix, filepath)
-    return require(absoluteFilepath)
+    return require(this.locateWorkspaceFile(filepath))
   }
 
-  private getProjectFile(filepath: string): string {
+  private locateWorkspaceFile(filepath: string): string {
+    return path.join(this.workspace, this.prefix, filepath)
+  }
+
+  private readProjectFile(filepath: string): string {
     const absoluteFilepath = path.join(__dirname, '../fixtures', filepath)
     return fs.readFileSync(absoluteFilepath, ENCODING)
   }
 
-  private getWorkspaceFile(filepath: string): string {
-    const absoluteFilepath = path.join(this.workspace, this.prefix, filepath)
-    return fs.readFileSync(absoluteFilepath, ENCODING)
+  private readWorkspaceFile(filepath: string): string {
+    return fs.readFileSync(this.locateWorkspaceFile(filepath), ENCODING)
   }
 
   private replaceContent(content: string, ...replacements: [string | RegExp, string][]): string {
@@ -145,9 +145,8 @@ export class Environment {
     return res
   }
 
-  private setWorkspaceFile(filepath: string, data: string): void {
-    const absoluteFilepath = path.join(this.workspace, this.prefix, filepath)
-    fs.writeFileSync(absoluteFilepath, data)
+  private writeWorkspaceFile(filepath: string, data: string): void {
+    fs.writeFileSync(this.locateWorkspaceFile(filepath), data)
   }
 }
 
