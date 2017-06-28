@@ -31,19 +31,6 @@ export class Environment {
     this.setWorkspaceFile(filepath, updatedContent)
   }
 
-  assertFileExists(filepath: string): void {
-    const absoluteFilepath = path.join(this.workspace, this.prefix, filepath)
-    if (!fs.existsSync(absoluteFilepath)) {
-      throw new Error(`${filepath} not found!`)
-    }
-  }
-
-  assertPatternInText(text: string, pattern: RegExp): void {
-    if (!pattern.test(text)) {
-      throw new Error(`${pattern} not found, the text is: ${text}`)
-    }
-  }
-
   cd(dir: string): void {
     shell.cd(dir)
   }
@@ -54,6 +41,11 @@ export class Environment {
 
   exec(command: string): void {
     shell.exec(command)
+  }
+
+  fileExists(filepath: string): boolean {
+    const absoluteFilepath = path.join(this.workspace, this.prefix, filepath)
+    return fs.existsSync(absoluteFilepath)
   }
 
   install(...deps: string[]): void {
