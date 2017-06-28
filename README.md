@@ -5,9 +5,21 @@ An experimental automation tool for Angular
 
 This project is separated from [learn angular the hard way](https://github.com/trotyl/learn-angular), acting as an automation tool to mimic the human behaviours.
 
-It is now used to confirm if the steps listed in a tutorial is working fine, and not breaking in new version. (with cron task in CI)
+It is now used to confirm if the steps listed in a tutorial is working fine, and not breaking in newer versions. (with cron task in CI)
+
+## Important Notes
+
+This project is currently for personal use only, there will be more documentation when it become stable and public.
 
 ## Usage
+
+Install via npm:
+
+```bash
+npm install anorexia --save-dev
+```
+
+Create a playbook:
 
 ```typescript
 // playbook.ts
@@ -63,4 +75,10 @@ playbook('playbook-name', async (env) => {
   })
 
 }, __dirname)
+```
+
+Execute the playbook
+
+```bash
+ts-node playbook.ts
 ```
