@@ -5,19 +5,19 @@ import * as shell from 'shelljs'
 
 import { ENCODING } from './constants'
 
-export interface PlatformServerOptions {
-  modulePath: string,
-  moduleName: string,
-  componentPath: string,
-  componentName: string,
-  htmlPath: string,
-}
+export interface Extensions { }
 
 export class Environment {
-  private prefix: string = ''
-  private platformServerOptions: PlatformServerOptions | null = null
+  static extensionFactories: ((env: Environment) => void)[]
 
-  constructor(private fixture: string, private workspace: string) { }
+  extensions: Extensions
+
+  private prefix: string = ''
+
+  constructor(private fixture: string, private workspace: string) {
+    this.extensions = {} as any
+    Environment.extensionFactories.forEach(factory => factory(this))
+  }
 
   appendFile(filepath: string, text: string): void {
     const content = this.readWorkspaceFile(filepath)
@@ -73,24 +73,6 @@ export class Environment {
     this.removeFiles(...srcSet)
   }
 
-  renderToHtml(): Promise<string> {
-    if (!this.platformServerOptions) {
-      throw new Error('PlatformServerOptions is not provided!')
-    }
-    const { modulePath, moduleName, componentPath, componentName, htmlPath } = this.platformServerOptions
-    const serverModuleTemplate = this.readProjectFile('server.module.js')
-    const serverModuleContent = this.replaceContent(serverModuleTemplate,
-      [/MODULE_PATH_PLACEHOLDER/g, `./${modulePath}`],
-      [/MODULE_NAME_PLACEHOLDER/g, moduleName],
-      [/COMPONENT_PATH_PLACEHOLDER/g, `./${componentPath}`],
-      [/COMPONENT_NAME_PLACEHOLDER/g, componentName],
-      [/HTML_PATH_PLACEHOLDER/g, htmlPath],
-    )
-    this.writeWorkspaceFile('__server.module.js', serverModuleContent)
-    const { result } = this.executeWorkspaceFile('__server.module.js')
-    return result
-  }
-
   replaceInFile(filepath: string, ...replacements: [string | RegExp, string][]): void {
     const content = this.readWorkspaceFile(filepath)
     const res = this.replaceContent(content, ...replacements)
@@ -110,28 +92,20 @@ export class Environment {
     this.prefix = prefix
   }
 
-  usePlatformServer(options: PlatformServerOptions) {
-    this.platformServerOptions = options
-  }
-
-  private executeWorkspaceFile(filepath: string): any {
+  executeWorkspaceFile(filepath: string): any {
     return require(this.locateWorkspaceFile(filepath))
   }
 
-  private locateWorkspaceFile(filepath: string): string {
-    return path.join(this.workspace, this.prefix, filepath)
-  }
-
-  private readProjectFile(filepath: string): string {
+  readProjectFile(filepath: string): string {
     const absoluteFilepath = path.join(__dirname, '../fixtures', filepath)
     return fs.readFileSync(absoluteFilepath, ENCODING)
   }
 
-  private readWorkspaceFile(filepath: string): string {
+  readWorkspaceFile(filepath: string): string {
     return fs.readFileSync(this.locateWorkspaceFile(filepath), ENCODING)
   }
 
-  private replaceContent(content: string, ...replacements: [string | RegExp, string][]): string {
+  replaceContent(content: string, ...replacements: [string | RegExp, string][]): string {
     let res = content
     replacements.forEach(([from, to]) => {
       res = res.replace(from as any, to)
@@ -139,7 +113,11 @@ export class Environment {
     return res
   }
 
-  private writeWorkspaceFile(filepath: string, data: string): void {
+  writeWorkspaceFile(filepath: string, data: string): void {
     fs.writeFileSync(this.locateWorkspaceFile(filepath), data)
+  }
+
+  private locateWorkspaceFile(filepath: string): string {
+    return path.join(this.workspace, this.prefix, filepath)
   }
 }

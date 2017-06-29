@@ -8,7 +8,9 @@
   "author": "Trotyl <trotyl@qq.com>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -p ."
+    "prebuild": "npm run clean",
+    "build": "tsc -p .",
+    "clean": "rimraf dist"
   },
   "dependencies": {
     "lodash": "^4.17.4",
@@ -19,6 +21,7 @@
     "@types/lodash": "^4.14.66",
     "@types/node": "^8.0.3",
     "@types/shelljs": "^0.7.2",
+    "rimraf": "^2.6.1",
     "typescript": "^2.3.4"
   }
 }
