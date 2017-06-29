@@ -5,8 +5,9 @@ import { Environment } from './core'
 
 let dispatcher: Promise<void> = Promise.resolve()
 
-export interface Task {
+export interface Task<T = void> {
   (): Promise<void> | void
+  (param: T): Promise<void> | void
 }
 
 export async function stage(name: string, task: Task): Promise<void> {
@@ -17,7 +18,7 @@ export async function stage(name: string, task: Task): Promise<void> {
   return await dispatcher
 }
 
-export async function playbook(name: string, task: (env: Environment) => Promise<void> | void, dirname: string): Promise<void> {
+export async function playbook(name: string, task: Task<Environment>, dirname: string): Promise<void> {
   shell.echo(`Starting playbook for ${name}`)
 
   const WORKSPACE_ROOT = '/tmp/workspaces'
@@ -32,5 +33,5 @@ export async function playbook(name: string, task: (env: Environment) => Promise
   const FIXTURE_DIR= path.join(dirname, 'fixtures')
 
   await task(new Environment(FIXTURE_DIR, WORKSPACE_DIR))
-  shell.echo('Playbook passed')
+  shell.echo('Playbook completed')
 }
