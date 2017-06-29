@@ -7,8 +7,12 @@ import { ENCODING } from './constants'
 
 export interface Extensions { }
 
+export interface ExtensionFactory {
+  (env: Environment): void
+}
+
 export class Environment {
-  static extensionFactories: ((env: Environment) => void)[]
+  static extensionFactories: ExtensionFactory[] = []
 
   extensions: Extensions
 
