@@ -23,7 +23,9 @@ Create a playbook:
 
 ```typescript
 // playbook.ts
+
 import { playbook, stage } from 'anorexia'
+import { assert } from 'chai'
 
 playbook('playbook-name', async (env) => {
   
@@ -45,7 +47,7 @@ playbook('playbook-name', async (env) => {
   })
 
   stage('verifying example', () => {
-    env.assertFileExists('dist/main.js')
+    assert.isTrue(env.fileExists('dist/main.js'))
   })
 
   stage('modifying example', () => {
@@ -58,7 +60,7 @@ playbook('playbook-name', async (env) => {
   })
 
   stage('verifying example', () => {
-    env.assertFileExists('target/main.js')
+    assert.isTrue(env.fileExists('target/main.js'))
   })
 
   stage('replacing example', () => {
@@ -70,7 +72,7 @@ playbook('playbook-name', async (env) => {
 
   await stage('verifying Angular app example', () => {
     const html = await env.renderToHtml()
-    env.assertPatternInText(html, /Hello Angular/)
+    assert.match(html, /Hello Angular/)
     env.echo('app works!')
   })
 
