@@ -1,6 +1,6 @@
 {
   "name": "anorexia",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "An experimental automation tool",
   "main": "dist/anorexia.js",
   "types": "dist/anorexia.d.ts",
