@@ -4,7 +4,7 @@ export class NoopExtension {
   constructor(private env: Environment) { }
 }
 
-export function noopExtensionFactory(env: Environment) {
+export function noopExtensionFactory(env: Environment): void {
   env.extensions.noop = new NoopExtension(env)
 }
 

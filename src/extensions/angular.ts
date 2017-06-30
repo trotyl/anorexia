@@ -23,6 +23,12 @@ export class AngularExtension {
   private platformServerOptions: PlatformServerOptions | null = null
 
   constructor(private env: Environment) { }
+
+  disableBootstrap(filepath: string): void {
+    this.env.replaceInFile(filepath, 
+      [/(ng\.platformBrowser(Dynamic)?\.)?platformBrowser(Dynamic)?\(.*?\)\.bootstrapModule(Factory)?\(.*?\)/g, '']
+    )
+  }
   
   renderToHtml(): Promise<string> {
     if (!this.platformServerOptions) {
@@ -47,7 +53,7 @@ export class AngularExtension {
   }
 }
 
-export function angularExtensionFactory(env: Environment) {
+export function angularExtensionFactory(env: Environment): void {
   env.extensions.angular = new AngularExtension(env)
 }
 

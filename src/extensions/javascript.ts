@@ -25,7 +25,7 @@ export class JavascriptExtension {
   }
 }
 
-export function javascriptExtensionFactory(env: Environment) {
+export function javascriptExtensionFactory(env: Environment): void {
   env.extensions.javascript = new JavascriptExtension(env)
 }
 

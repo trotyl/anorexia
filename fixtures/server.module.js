@@ -20,6 +20,8 @@ core.NgModule({
   bootstrap: [COMPONENT_NAME_PLACEHOLDER],
 })(AnorexiaServerAppModule)
 
+core.enableProdMode()
+
 const fs = require('fs')
 const document = fs.readFileSync('HTML_PATH_PLACEHOLDER', 'utf8')
 
