@@ -13,7 +13,7 @@
     "clean-build": "rimraf dist",
     "pretest": "cp -r tools/mocks/ src/node_modules && rimraf coverage",
     "test": "karma start || npm run clean-test",
-    "posttest": "npm run clean-test && npm run fix-coverage",
+    "posttest": "npm run clean-test",
     "clean-test": "rimraf src/node_modules",
     "fix-coverage": "for f in coverage/* ; do mv \"$f\"/html/* coverage/; done"
   },

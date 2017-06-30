@@ -88,6 +88,13 @@ module.exports = function(config) {
           /node_modules/,
         ]
       },
+      reports: {
+        'lcovonly': {
+          directory: 'coverage',
+          subdirectory: 'lcovonly',
+          filename: 'lcov.info',
+        }
+      }
     }
   })
 }
