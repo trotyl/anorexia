@@ -1,5 +1,7 @@
 node_modules/
 src/
+coverage/
 !dist/
+karma.conf.js
 tsconfig.json
 yarn-error.log
