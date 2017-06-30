@@ -9,6 +9,17 @@ export interface PlatformServerOptions {
 }
 
 export class AngularExtension {
+  readonly packages = {
+    animations: '@angular/animations',
+    core: '@angular/core',
+    common: '@angular/common',
+    compiler: '@angular/compiler',
+    http: '@angular/http',
+    platformBrowser: '@angular/platform-browser',
+    platformBrowserDynamic: '@angular/platform-browser-dynamic',
+    platformServer: '@angular/platform-server',
+  }
+
   private platformServerOptions: PlatformServerOptions | null = null
 
   constructor(private env: Environment) { }
