@@ -89,11 +89,12 @@ module.exports = function(config) {
         ]
       },
       reports: {
+        'html': 'coverage',
         'lcovonly': {
           directory: 'coverage',
           subdirectory: 'lcovonly',
           filename: 'lcov.info',
-        }
+        },
       }
     }
   })
