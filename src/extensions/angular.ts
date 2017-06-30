@@ -29,6 +29,13 @@ export class AngularExtension {
       [/(ng\.platformBrowser(Dynamic)?\.)?platformBrowser(Dynamic)?\(.*?\)\.bootstrapModule(Factory)?\(.*?\)/g, '']
     )
   }
+
+  enableServerTransition(filepath: string): void {
+    const replacement = `BrowserModule.withServerTransition({appId: 'none'})`
+    this.env.replaceInFile(filepath,
+      [/imports\s*?:\s*?\[([\s\S\n]*?)BrowserModule,?([\s\S\n]*?)\]/g, `imports: \[$1${replacement},$2\]`]
+    )
+  }
   
   renderToHtml(): Promise<string> {
     if (!this.platformServerOptions) {
