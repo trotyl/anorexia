@@ -87,7 +87,7 @@ module.exports = function(config) {
           /polyfills\.ts/,
           /node_modules/,
         ]
-      }
+      },
     }
   })
 }
