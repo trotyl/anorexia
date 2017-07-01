@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 import { stub } from 'sinon'
+import { WORKSPACE_ROOT_CONTAINER } from '../src/constants'
 import { create, Environment, ExtensionFactory } from '../src/core'
 
 declare module '../src/core' {
@@ -24,5 +25,23 @@ describe('core', () => {
 
     expect(mockExtensionFactory.calledWith(env))
     expect(env.extensions.mock).to.equal(MOCK_EXTENSION)
+  })
+
+  describe('with environment instance', () => {
+    const workspaceRoot = `${WORKSPACE_ROOT_CONTAINER}/anorexia-test`
+    let env: Environment
+
+    beforeEach(() => {
+      env = create(__dirname, workspaceRoot)
+    })
+
+    it('should be able to append file', () => {
+      stub(env, 'readWorkspaceFile').withArgs('test.txt').returns(`1234`)
+      const writeSpy = stub(env, 'writeWorkspaceFile')
+
+      const res = env.appendFile('test.txt', `5678`)
+
+      expect(writeSpy.args[0]).to.deep.equal(['test.txt', `1234\n5678`])
+    })
   })
 })

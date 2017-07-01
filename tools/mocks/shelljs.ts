@@ -1,5 +1,5 @@
-export const cd: Function = () => {}
-export const echo: Function = () => {}
-export const exec: Function = () => {}
-export const mkdir: Function = () => {}
-export const rm: Function = () => {}
+export const cd: Function = () => { throw new Error('shoule not be called') }
+export const echo: Function = () => { throw new Error('shoule not be called') }
+export const exec: Function = () => { throw new Error('shoule not be called') }
+export const mkdir: Function = () => { throw new Error('shoule not be called') }
+export const rm: Function = () => { throw new Error('shoule not be called') }
