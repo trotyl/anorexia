@@ -1,5 +1,6 @@
 // Karma configuration
 // Generated on Fri Jun 30 2017 16:08:21 GMT+0800 (CST)
+const path = require('path')
 
 module.exports = function(config) {
   config.set({
@@ -15,9 +16,9 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'tools/polyfills.ts',
+      'tools/**/*.ts',
       'src/**/*.ts',
-      'test/**/*.ts'
+      'test/**/*.ts',
     ],
 
 
@@ -29,9 +30,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      // 'tools/polyfills.ts': ['karma-typescript'],
       '**/*.ts': ['karma-typescript'],
-      // 'test/**/*.ts': ['karma-typescript'],
     },
 
 
@@ -80,11 +79,18 @@ module.exports = function(config) {
     karmaTypescriptConfig: {
       compilerOptions: {
         lib: ['es2015'],
+        baseUrl: '.',
+        paths: {
+          'fs': ['tools/mocks/fs'],
+          'path': ['tools/mocks/path'],
+          'shelljs': ['tools/mocks/shelljs'],
+        }
       },
       coverageOptions: {
         exclude: [
           /\.(d|spec|test)\.ts/,
           /polyfills\.ts/,
+          /mocks/,
           /node_modules/,
         ]
       },

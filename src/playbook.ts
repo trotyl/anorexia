@@ -1,7 +1,8 @@
 import * as path from 'path'
 import * as shell from 'shelljs'
 
-import { Environment } from './core'
+import { WORKSPACE_ROOT_CONTAINER } from './constants'
+import { create, Environment } from './core'
 
 let dispatcher: Promise<void> = Promise.resolve()
 
@@ -21,20 +22,17 @@ export async function stage(name: string, task: Step): Promise<void> {
   return await dispatcher
 }
 
-export async function playbook(name: string, task: Scenario, dirname: string): Promise<void> {
+export async function playbook(name: string, task: Scenario, projectRoot: string): Promise<void> {
   shell.echo(`Starting playbook for ${name}`)
 
-  const WORKSPACE_ROOT = '/tmp/workspaces'
-  const WORKSPACE_DIR = path.join(WORKSPACE_ROOT, name)
+  const workspaceRoot = path.join(WORKSPACE_ROOT_CONTAINER, name)
 
   shell.echo(`Creating workspace ${name}`)
-  shell.mkdir('-p', WORKSPACE_DIR)
-  shell.rm('-rf', WORKSPACE_DIR)
-  shell.mkdir(WORKSPACE_DIR)
-  shell.cd(WORKSPACE_DIR)
+  shell.mkdir('-p', workspaceRoot)
+  shell.rm('-rf', workspaceRoot)
+  shell.mkdir(workspaceRoot)
+  shell.cd(workspaceRoot)
 
-  const FIXTURE_DIR= path.join(dirname, 'fixtures')
-
-  await task(new Environment(FIXTURE_DIR, WORKSPACE_DIR))
+  await task(create(projectRoot))
   shell.echo('Playbook completed')
 }

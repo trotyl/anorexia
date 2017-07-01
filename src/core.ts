@@ -3,7 +3,7 @@ import * as path from 'path'
 import * as _ from 'lodash'
 import * as shell from 'shelljs'
 
-import { ENCODING } from './constants'
+import { ENCODING, WORKSPACE_ROOT_CONTAINER } from './constants'
 
 export interface Extensions { }
 
@@ -18,7 +18,7 @@ export class Environment {
 
   private prefix: string = ''
 
-  constructor(private fixture: string, private workspace: string) {
+  constructor(private projectRoot: string, private workspaceRoot: string) {
     this.extensions = {} as any
     Environment.extensionFactories.forEach(factory => factory(this))
   }
@@ -86,7 +86,7 @@ export class Environment {
   setUpFiles(hash: { [src: string]: string }): void {
     Object.keys(hash)
       .forEach(src => {
-        const absoluteSrc = path.join(this.fixture, src)
+        const absoluteSrc = path.join(this.projectRoot, src)
         const absoluteDist = this.locateWorkspaceFile(hash[src])
         fs.writeFileSync(absoluteDist, fs.readFileSync(absoluteSrc))
       })
@@ -122,6 +122,11 @@ export class Environment {
   }
 
   private locateWorkspaceFile(filepath: string): string {
-    return path.join(this.workspace, this.prefix, filepath)
+    return path.join(this.workspaceRoot, this.prefix, filepath)
   }
+}
+
+export function create(projectRoot: string, workspaceRoot?: string): Environment {
+  workspaceRoot = workspaceRoot || `${WORKSPACE_ROOT_CONTAINER}/${Date.now()}`
+  return new Environment(projectRoot, workspaceRoot)
 }
