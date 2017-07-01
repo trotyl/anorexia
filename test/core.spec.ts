@@ -68,5 +68,15 @@ describe('core', () => {
 
       echoStub.restore()
     })
+
+    it('should be able to exec', () => {
+      const execStub = stub(shell, 'exec')
+
+      env.exec('command')
+
+      expect(execStub.args[0]).to.deep.equal(['command'])
+
+      execStub.restore()
+    })
   })
 })
