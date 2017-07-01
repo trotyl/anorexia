@@ -58,5 +58,15 @@ describe('core', () => {
 
       cdStub.restore()
     })
+
+    it('should be able to echo', () => {
+      const echoStub = stub(shell, 'echo')
+
+      env.echo('foo', 'bar')
+
+      expect(echoStub.args[0]).to.deep.equal(['foo', 'bar'])
+
+      echoStub.restore()
+    })
   })
 })
