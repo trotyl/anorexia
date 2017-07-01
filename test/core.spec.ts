@@ -1,3 +1,4 @@
+import * as shell from 'shelljs'
 import { expect } from 'chai'
 import { stub } from 'sinon'
 import { WORKSPACE_ROOT_CONTAINER } from '../src/constants'
@@ -43,9 +44,19 @@ describe('core', () => {
       const res = env.appendFile('test.txt', `5678`)
 
       expect(writeStub.args[0]).to.deep.equal(['test.txt', `1234\n5678`])
-      
+
       readStub.restore()
       writeStub.restore()
+    })
+
+    it('should be able to cd', () => {
+      const cdStub = stub(shell, 'cd')
+
+      env.cd('dir')
+
+      expect(cdStub.args[0]).to.deep.equal(['dir'])
+
+      cdStub.restore()
     })
   })
 })
