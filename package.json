@@ -25,6 +25,7 @@
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.3",
     "@types/shelljs": "^0.7.2",
+    "@types/sinon": "^2.3.2",
     "chai": "^4.0.2",
     "core-js": "^2.4.1",
     "karma": "^1.7.0",
@@ -33,6 +34,7 @@
     "karma-typescript": "^3.0.4",
     "mocha": "^3.4.2",
     "rimraf": "^2.6.1",
+    "sinon": "^2.3.6",
     "typescript": "^2.3.4"
   }
 }
