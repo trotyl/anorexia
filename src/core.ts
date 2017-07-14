@@ -23,12 +23,6 @@ export class Environment {
     Environment.extensionFactories.forEach(factory => factory(this))
   }
 
-  appendFile(filepath: string, text: string): void {
-    const content = this.readWorkspaceFile(filepath)
-    const updatedContent = content + '\n' + text
-    this.writeWorkspaceFile(filepath, updatedContent)
-  }
-
   cd(dir: string): void {
     shell.cd(dir)
   }
