@@ -4,6 +4,7 @@ import * as _ from 'lodash'
 import * as shell from 'shelljs'
 
 import { ENCODING, WORKSPACE_ROOT_CONTAINER } from './constants'
+import { replaceContent } from './utils/string'
 
 export interface Extensions { }
 
@@ -21,18 +22,6 @@ export class Environment {
   constructor(private projectRoot: string, private workspaceRoot: string) {
     this.extensions = {} as any
     Environment.extensionFactories.forEach(factory => factory(this))
-  }
-
-  cd(dir: string): void {
-    shell.cd(dir)
-  }
-
-  echo(...text: string[]): void {
-    shell.echo(...text)
-  }
-
-  exec(command: string): void {
-    shell.exec(command)
   }
 
   fileExists(filepath: string): boolean {
@@ -73,7 +62,7 @@ export class Environment {
 
   replaceInFile(filepath: string, ...replacements: [string | RegExp, string][]): void {
     const content = this.readWorkspaceFile(filepath)
-    const res = this.replaceContent(content, ...replacements)
+    const res = replaceContent(content, ...replacements)
     this.writeWorkspaceFile(filepath, res)
   }
 
@@ -109,14 +98,6 @@ export class Environment {
 
   private locateWorkspaceFile(filepath: string): string {
     return path.join(this.workspaceRoot, this.prefix, filepath)
-  }
-
-  private replaceContent(content: string, ...replacements: [string | RegExp, string][]): string {
-    let res = content
-    replacements.forEach(([from, to]) => {
-      res = res.replace(from as any, to)
-    })
-    return res
   }
 }
 

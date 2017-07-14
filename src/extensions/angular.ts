@@ -1,4 +1,5 @@
 import { Environment } from '../core'
+import { replaceContent } from '../utils/string'
 
 export interface PlatformServerOptions {
   modulePath: string,
@@ -43,7 +44,7 @@ export class AngularExtension {
     }
     const { modulePath, moduleName, componentPath, componentName, htmlPath } = this.platformServerOptions
     const serverModuleTemplate = this.env.readProjectFile('server.module.js')
-    const serverModuleContent = this.env.replaceContent(serverModuleTemplate,
+    const serverModuleContent = replaceContent(serverModuleTemplate,
       [/MODULE_PATH_PLACEHOLDER/g, `./${modulePath}`],
       [/MODULE_NAME_PLACEHOLDER/g, moduleName],
       [/COMPONENT_PATH_PLACEHOLDER/g, `./${componentPath}`],
