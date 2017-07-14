@@ -1,4 +1,5 @@
 import { Environment } from '../core'
+import { TextExtension } from './text'
 
 export type ModuleType = 'commonjs'
 
@@ -6,6 +7,10 @@ export class JavascriptExtension {
   private moduleType: ModuleType = 'commonjs'
 
   constructor(private env: Environment) { }
+
+  get text(): TextExtension {
+    return this.env.extensions.text
+  }
 
   addModuleExports(filepath: string, ...exportNames: string[]): void {
     let extras: string[] = []
@@ -17,7 +22,7 @@ export class JavascriptExtension {
         throw new Error(`module type ${this.moduleType} is not supported`)
     }
     const appendix = `\n${extras.join('\n')}\n`
-    this.env.appendFile(filepath, appendix)
+    this.text.appendEnd(filepath, appendix)
   }
 
   useModule(moduleType: ModuleType): void {
