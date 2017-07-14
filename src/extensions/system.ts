@@ -23,7 +23,7 @@ export function systemExtensionFactory(env: Environment): void {
 
 Environment.extensionFactories.push(systemExtensionFactory)
 
-declare module '../core' {
+declare module '../core/environment' {
   interface Extensions {
     system: SystemExtension
   }

@@ -1,8 +1,7 @@
 import * as path from 'path'
 import * as shell from 'shelljs'
 
-import { WORKSPACE_ROOT_CONTAINER } from './constants'
-import { create, Environment } from './core'
+import { create, Environment, WORKSPACE_ROOT_CONTAINER } from './core'
 
 let dispatcher: Promise<void> = Promise.resolve()
 

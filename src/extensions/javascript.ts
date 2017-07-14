@@ -36,7 +36,7 @@ export function javascriptExtensionFactory(env: Environment): void {
 
 Environment.extensionFactories.push(javascriptExtensionFactory)
 
-declare module '../core' {
+declare module '../core/environment' {
   interface Extensions {
     javascript: JavascriptExtension
   }

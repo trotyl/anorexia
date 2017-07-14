@@ -1,0 +1,1 @@
+export { replaceContent } from './string'

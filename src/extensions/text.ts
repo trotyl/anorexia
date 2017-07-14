@@ -32,7 +32,7 @@ export function textExtensionFactory(env: Environment): void {
 
 Environment.extensionFactories.push(textExtensionFactory)
 
-declare module '../core' {
+declare module '../core/environment' {
   interface Extensions {
     text: TextExtension
   }

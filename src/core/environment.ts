@@ -4,7 +4,7 @@ import * as _ from 'lodash'
 import * as shell from 'shelljs'
 
 import { ENCODING, WORKSPACE_ROOT_CONTAINER } from './constants'
-import { replaceContent } from './utils/string'
+import { replaceContent } from '../utils'
 
 export interface Extensions { }
 

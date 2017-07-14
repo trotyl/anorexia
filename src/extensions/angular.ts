@@ -67,7 +67,7 @@ export function angularExtensionFactory(env: Environment): void {
 
 Environment.extensionFactories.push(angularExtensionFactory)
 
-declare module '../core' {
+declare module '../core/environment' {
   interface Extensions {
     angular: AngularExtension
   }

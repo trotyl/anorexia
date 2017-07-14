@@ -10,7 +10,7 @@ export function noopExtensionFactory(env: Environment): void {
 
 Environment.extensionFactories.push(noopExtensionFactory)
 
-declare module '../core' {
+declare module '../core/environment' {
   interface Extensions {
     noop: NoopExtension
   }
