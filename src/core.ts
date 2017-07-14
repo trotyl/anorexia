@@ -103,20 +103,20 @@ export class Environment {
     return fs.readFileSync(this.locateWorkspaceFile(filepath), ENCODING)
   }
 
-  replaceContent(content: string, ...replacements: [string | RegExp, string][]): string {
-    let res = content
-    replacements.forEach(([from, to]) => {
-      res = res.replace(from as any, to)
-    })
-    return res
-  }
-
   writeWorkspaceFile(filepath: string, data: string): void {
     fs.writeFileSync(this.locateWorkspaceFile(filepath), data)
   }
 
   private locateWorkspaceFile(filepath: string): string {
     return path.join(this.workspaceRoot, this.prefix, filepath)
+  }
+
+  private replaceContent(content: string, ...replacements: [string | RegExp, string][]): string {
+    let res = content
+    replacements.forEach(([from, to]) => {
+      res = res.replace(from as any, to)
+    })
+    return res
   }
 }
 
