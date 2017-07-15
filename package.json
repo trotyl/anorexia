@@ -11,7 +11,7 @@
     "prebuild": "npm run clean-build",
     "build": "tsc -p .",
     "clean-build": "rimraf dist",
-    "pretest": "rimraf coverage",
+    "pretest": "tsc -p ./tsconfig.spec.json",
     "test": "mocha ./test"
   },
   "dependencies": {
