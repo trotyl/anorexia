@@ -32,6 +32,6 @@ export async function playbook(name: string, task: Scenario, projectRoot: string
   shell.mkdir(workspaceRoot)
   shell.cd(workspaceRoot)
 
-  await task(createHost(projectRoot))
+  await task(createHost(projectRoot, workspaceRoot))
   shell.echo('Playbook completed')
 }

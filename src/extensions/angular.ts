@@ -1,4 +1,4 @@
-import { Host } from '../core'
+import { Host, OnInit } from '../core'
 import { replaceContent } from '../utils'
 import { TextExtension } from './text'
 
@@ -10,7 +10,7 @@ export interface PlatformServerOptions {
   htmlPath: string,
 }
 
-export class AngularExtension {
+export class AngularExtension implements OnInit {
   readonly packages = {
     animations: '@angular/animations',
     core: '@angular/core',
@@ -25,6 +25,12 @@ export class AngularExtension {
   private platformServerOptions: PlatformServerOptions | null = null
 
   constructor(private host: Host) { }
+
+  onInit(): void {
+    this.host.setUpFiles({
+      [`../../fixtures/server.module.js`]: `__server.module.js`
+    }, __dirname)
+  }
 
   get text(): TextExtension {
     return this.host.extensions.text
@@ -48,15 +54,13 @@ export class AngularExtension {
       throw new Error('PlatformServerOptions is not provided!')
     }
     const { modulePath, moduleName, componentPath, componentName, htmlPath } = this.platformServerOptions
-    const serverModuleTemplate = this.host.readProjectFile('server.module.js')
-    const serverModuleContent = replaceContent(serverModuleTemplate,
+    const serverModuleContent = this.text.replaceInFile('__server.module.js',
       [/MODULE_PATH_PLACEHOLDER/g, `./${modulePath}`],
       [/MODULE_NAME_PLACEHOLDER/g, moduleName],
       [/COMPONENT_PATH_PLACEHOLDER/g, `./${componentPath}`],
       [/COMPONENT_NAME_PLACEHOLDER/g, componentName],
       [/HTML_PATH_PLACEHOLDER/g, htmlPath],
     )
-    this.host.writeWorkspaceFile('__server.module.js', serverModuleContent)
     const { result } = this.host.executeWorkspaceFile('__server.module.js')
     return result
   }
