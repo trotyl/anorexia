@@ -22,6 +22,7 @@ export class Host {
   constructor(private projectRoot: string, private workspaceRoot: string) {
     this.extensions = {} as any
     Host.extensionFactories.forEach(factory => factory(this))
+    Object.values(this.extensions).forEach(extension => extension.onInit && extension.onInit())
   }
 
   install(...deps: string[]): void {
