@@ -1,7 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import * as _ from 'lodash'
-import * as shell from 'shelljs'
 
 import { ENCODING, WORKSPACE_ROOT_CONTAINER } from './constants'
 import { replaceContent } from '../utils'
@@ -23,14 +22,6 @@ export class Host {
     this.extensions = {} as any
     Host.extensionFactories.forEach(factory => factory(this))
     Object.values(this.extensions).forEach(extension => extension.onInit && extension.onInit())
-  }
-
-  install(...deps: string[]): void {
-    if (deps.length > 0) {
-      shell.exec(`yarn add ${deps.join(' ')}`)
-    } else {
-      shell.exec('yarn install')
-    }
   }
 
   modifyJson(filepath: string, partial: Object): void {
