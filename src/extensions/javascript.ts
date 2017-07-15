@@ -30,11 +30,11 @@ export class JavascriptExtension {
   }
 }
 
-export function javascriptExtensionFactory(host: Host): void {
+export function createJavascriptExtension(host: Host): void {
   host.extensions.javascript = new JavascriptExtension(host)
 }
 
-Host.extensionFactories.push(javascriptExtensionFactory)
+Host.extensionFactories.push(createJavascriptExtension)
 
 declare module '../core/host' {
   interface Extensions {

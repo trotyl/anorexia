@@ -17,11 +17,11 @@ export class SystemExtension {
   }
 }
 
-export function systemExtensionFactory(host: Host): void {
+export function createSystemExtension(host: Host): void {
   host.extensions.system = new SystemExtension(host)
 }
 
-Host.extensionFactories.push(systemExtensionFactory)
+Host.extensionFactories.push(createSystemExtension)
 
 declare module '../core/host' {
   interface Extensions {

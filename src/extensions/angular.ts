@@ -66,11 +66,11 @@ export class AngularExtension {
   }
 }
 
-export function angularExtensionFactory(host: Host): void {
+export function createAngularExtension(host: Host): void {
   host.extensions.angular = new AngularExtension(host)
 }
 
-Host.extensionFactories.push(angularExtensionFactory)
+Host.extensionFactories.push(createAngularExtension)
 
 declare module '../core/host' {
   interface Extensions {

@@ -4,11 +4,11 @@ export class NoopExtension {
   constructor(private host: Host) { }
 }
 
-export function noopExtensionFactory(host: Host): void {
+export function createNoopExtension(host: Host): void {
   host.extensions.noop = new NoopExtension(host)
 }
 
-Host.extensionFactories.push(noopExtensionFactory)
+Host.extensionFactories.push(createNoopExtension)
 
 declare module '../core/host' {
   interface Extensions {

@@ -13,11 +13,11 @@ export class YarnExtension {
   }
 }
 
-export function yarnExtensionFactory(host: Host): void {
+export function createYarnExtension(host: Host): void {
   host.extensions.yarn = new YarnExtension(host)
 }
 
-Host.extensionFactories.push(yarnExtensionFactory)
+Host.extensionFactories.push(createYarnExtension)
 
 declare module '../core/host' {
   interface Extensions {

@@ -25,11 +25,11 @@ export class FileExtension {
   }
 }
 
-export function fileExtensionFactory(host: Host): void {
+export function createFileExtension(host: Host): void {
   host.extensions.file = new FileExtension(host)
 }
 
-Host.extensionFactories.push(fileExtensionFactory)
+Host.extensionFactories.push(createFileExtension)
 
 declare module '../core/host' {
   interface Extensions {

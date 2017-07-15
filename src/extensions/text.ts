@@ -31,11 +31,11 @@ export class TextExtension {
   }
 }
 
-export function textExtensionFactory(host: Host): void {
+export function createTextExtension(host: Host): void {
   host.extensions.text = new TextExtension(host)
 }
 
-Host.extensionFactories.push(textExtensionFactory)
+Host.extensionFactories.push(createTextExtension)
 
 declare module '../core/host' {
   interface Extensions {
