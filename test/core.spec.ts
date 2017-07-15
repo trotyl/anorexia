@@ -1,10 +1,9 @@
 import * as shell from 'shelljs'
 import { expect } from 'chai'
 import { stub } from 'sinon'
-import { WORKSPACE_ROOT_CONTAINER } from '../src/constants'
-import { createHost, Host, ExtensionFactory } from '../src/core'
+import { createHost, Host, ExtensionFactory, WORKSPACE_ROOT_CONTAINER } from '../src/core'
 
-declare module '../src/core' {
+declare module '../src/core/host' {
   interface Extensions {
     mock: any
   }
@@ -36,34 +35,5 @@ describe('core', () => {
       env = createHost(__dirname, workspaceRoot)
     })
 
-    it('should be able to cd', () => {
-      const cdStub = stub(shell, 'cd')
-
-      env.cd('dir')
-
-      expect(cdStub.args[0]).to.deep.equal(['dir'])
-
-      cdStub.restore()
-    })
-
-    it('should be able to echo', () => {
-      const echoStub = stub(shell, 'echo')
-
-      env.echo('foo', 'bar')
-
-      expect(echoStub.args[0]).to.deep.equal(['foo', 'bar'])
-
-      echoStub.restore()
-    })
-
-    it('should be able to exec', () => {
-      const execStub = stub(shell, 'exec')
-
-      env.exec('command')
-
-      expect(execStub.args[0]).to.deep.equal(['command'])
-
-      execStub.restore()
-    })
   })
 })

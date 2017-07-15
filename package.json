@@ -12,7 +12,7 @@
     "build": "tsc -p .",
     "clean-build": "rimraf dist",
     "pretest": "rimraf coverage",
-    "test": "karma start"
+    "test": "mocha ./test"
   },
   "dependencies": {
     "lodash": "^4.17.4",
