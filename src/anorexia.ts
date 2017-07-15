@@ -1,4 +1,4 @@
-export { create, Environment } from './core'
+export { createHost, Host } from './core'
 export { playbook, stage } from './playbook'
 
 import './extensions/angular'

@@ -1,37 +1,37 @@
 import * as fs from 'fs'
-import { Environment, ENCODING } from '../core'
+import { Host, ENCODING } from '../core'
 
 export class FileExtension {
-  constructor(private env: Environment) { }
+  constructor(private host: Host) { }
 
   exists(filepath: string): boolean {
-    return fs.existsSync(this.env.locateWorkspaceFile(filepath))
+    return fs.existsSync(this.host.locateWorkspaceFile(filepath))
   }
 
   remove(...list: string[]): void {
     list.forEach(filepath => {
-      fs.unlinkSync(this.env.locateWorkspaceFile(filepath))
+      fs.unlinkSync(this.host.locateWorkspaceFile(filepath))
     })
   }
 
   rename(hash: { [src: string]: string }): void {
     const srcSet = Object.keys(hash)
     srcSet.forEach(src => {
-      const absoluteSrc = this.env.locateWorkspaceFile(src)
-      const absoluteDist = this.env.locateWorkspaceFile(hash[src])
+      const absoluteSrc = this.host.locateWorkspaceFile(src)
+      const absoluteDist = this.host.locateWorkspaceFile(hash[src])
       fs.writeFileSync(absoluteDist, fs.readFileSync(absoluteSrc, ENCODING))
     })
     this.remove(...srcSet)
   }
 }
 
-export function fileExtensionFactory(env: Environment): void {
-  env.extensions.file = new FileExtension(env)
+export function fileExtensionFactory(host: Host): void {
+  host.extensions.file = new FileExtension(host)
 }
 
-Environment.extensionFactories.push(fileExtensionFactory)
+Host.extensionFactories.push(fileExtensionFactory)
 
-declare module '../core/environment' {
+declare module '../core/host' {
   interface Extensions {
     file: FileExtension
   }

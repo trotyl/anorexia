@@ -9,10 +9,10 @@ import { replaceContent } from '../utils'
 export interface Extensions { }
 
 export interface ExtensionFactory {
-  (env: Environment): void
+  (host: Host): void
 }
 
-export class Environment {
+export class Host {
   static extensionFactories: ExtensionFactory[] = []
 
   extensions: Extensions
@@ -21,7 +21,7 @@ export class Environment {
 
   constructor(private projectRoot: string, private workspaceRoot: string) {
     this.extensions = {} as any
-    Environment.extensionFactories.forEach(factory => factory(this))
+    Host.extensionFactories.forEach(factory => factory(this))
   }
 
   install(...deps: string[]): void {
@@ -75,7 +75,7 @@ export class Environment {
   }
 }
 
-export function create(projectRoot: string, workspaceRoot?: string): Environment {
+export function createHost(projectRoot: string, workspaceRoot?: string): Host {
   workspaceRoot = workspaceRoot || `${WORKSPACE_ROOT_CONTAINER}/${Date.now()}`
-  return new Environment(projectRoot, workspaceRoot)
+  return new Host(projectRoot, workspaceRoot)
 }

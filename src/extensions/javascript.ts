@@ -1,4 +1,4 @@
-import { Environment } from '../core'
+import { Host } from '../core'
 import { TextExtension } from './text'
 
 export type ModuleType = 'commonjs'
@@ -6,10 +6,10 @@ export type ModuleType = 'commonjs'
 export class JavascriptExtension {
   private moduleType: ModuleType = 'commonjs'
 
-  constructor(private env: Environment) { }
+  constructor(private host: Host) { }
 
   get text(): TextExtension {
-    return this.env.extensions.text
+    return this.host.extensions.text
   }
 
   addModuleExports(filepath: string, ...exportNames: string[]): void {
@@ -30,13 +30,13 @@ export class JavascriptExtension {
   }
 }
 
-export function javascriptExtensionFactory(env: Environment): void {
-  env.extensions.javascript = new JavascriptExtension(env)
+export function javascriptExtensionFactory(host: Host): void {
+  host.extensions.javascript = new JavascriptExtension(host)
 }
 
-Environment.extensionFactories.push(javascriptExtensionFactory)
+Host.extensionFactories.push(javascriptExtensionFactory)
 
-declare module '../core/environment' {
+declare module '../core/host' {
   interface Extensions {
     javascript: JavascriptExtension
   }

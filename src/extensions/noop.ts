@@ -1,16 +1,16 @@
-import { Environment } from '../core'
+import { Host } from '../core'
 
 export class NoopExtension {
-  constructor(private env: Environment) { }
+  constructor(private host: Host) { }
 }
 
-export function noopExtensionFactory(env: Environment): void {
-  env.extensions.noop = new NoopExtension(env)
+export function noopExtensionFactory(host: Host): void {
+  host.extensions.noop = new NoopExtension(host)
 }
 
-Environment.extensionFactories.push(noopExtensionFactory)
+Host.extensionFactories.push(noopExtensionFactory)
 
-declare module '../core/environment' {
+declare module '../core/host' {
   interface Extensions {
     noop: NoopExtension
   }

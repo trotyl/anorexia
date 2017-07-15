@@ -1,5 +1,6 @@
-import { Environment } from '../core'
-import { replaceContent } from '../utils/string'
+import { Host } from '../core'
+import { replaceContent } from '../utils'
+import { TextExtension } from './text'
 
 export interface PlatformServerOptions {
   modulePath: string,
@@ -23,17 +24,21 @@ export class AngularExtension {
 
   private platformServerOptions: PlatformServerOptions | null = null
 
-  constructor(private env: Environment) { }
+  constructor(private host: Host) { }
+
+  get text(): TextExtension {
+    return this.host.extensions.text
+  }
 
   disableBootstrap(filepath: string): void {
-    this.env.replaceInFile(filepath, 
+    this.text.replaceInFile(filepath, 
       [/(ng\.platformBrowser(Dynamic)?\.)?platformBrowser(Dynamic)?\(.*?\)\.bootstrapModule(Factory)?\(.*?\)/g, '']
     )
   }
 
   enableServerTransition(filepath: string): void {
     const replacement = `BrowserModule.withServerTransition({appId: 'none'})`
-    this.env.replaceInFile(filepath,
+    this.text.replaceInFile(filepath,
       [/imports\s*?:\s*?\[([\s\S\n]*?)BrowserModule,?([\s\S\n]*?)\]/g, `imports: \[$1${replacement},$2\]`]
     )
   }
@@ -43,7 +48,7 @@ export class AngularExtension {
       throw new Error('PlatformServerOptions is not provided!')
     }
     const { modulePath, moduleName, componentPath, componentName, htmlPath } = this.platformServerOptions
-    const serverModuleTemplate = this.env.readProjectFile('server.module.js')
+    const serverModuleTemplate = this.host.readProjectFile('server.module.js')
     const serverModuleContent = replaceContent(serverModuleTemplate,
       [/MODULE_PATH_PLACEHOLDER/g, `./${modulePath}`],
       [/MODULE_NAME_PLACEHOLDER/g, moduleName],
@@ -51,8 +56,8 @@ export class AngularExtension {
       [/COMPONENT_NAME_PLACEHOLDER/g, componentName],
       [/HTML_PATH_PLACEHOLDER/g, htmlPath],
     )
-    this.env.writeWorkspaceFile('__server.module.js', serverModuleContent)
-    const { result } = this.env.executeWorkspaceFile('__server.module.js')
+    this.host.writeWorkspaceFile('__server.module.js', serverModuleContent)
+    const { result } = this.host.executeWorkspaceFile('__server.module.js')
     return result
   }
 
@@ -61,13 +66,13 @@ export class AngularExtension {
   }
 }
 
-export function angularExtensionFactory(env: Environment): void {
-  env.extensions.angular = new AngularExtension(env)
+export function angularExtensionFactory(host: Host): void {
+  host.extensions.angular = new AngularExtension(host)
 }
 
-Environment.extensionFactories.push(angularExtensionFactory)
+Host.extensionFactories.push(angularExtensionFactory)
 
-declare module '../core/environment' {
+declare module '../core/host' {
   interface Extensions {
     angular: AngularExtension
   }

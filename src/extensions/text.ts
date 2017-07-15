@@ -1,8 +1,8 @@
-import { Environment } from '../core'
+import { Host } from '../core'
 import { replaceContent } from '../utils'
 
 export class TextExtension {
-  constructor(private env: Environment) { }
+  constructor(private host: Host) { }
 
   appendStart(filepath: string, text: string): void {
     return this._modifyText(filepath, (original) => `${text}\n${original}`)
@@ -25,19 +25,19 @@ export class TextExtension {
   }
 
   private _modifyText(filepath: string, operation: (original: string) => string) {
-    const original = this.env.readWorkspaceFile(filepath)
+    const original = this.host.readWorkspaceFile(filepath)
     const modified = operation(original)
-    this.env.writeWorkspaceFile(filepath, modified)
+    this.host.writeWorkspaceFile(filepath, modified)
   }
 }
 
-export function textExtensionFactory(env: Environment): void {
-  env.extensions.text = new TextExtension(env)
+export function textExtensionFactory(host: Host): void {
+  host.extensions.text = new TextExtension(host)
 }
 
-Environment.extensionFactories.push(textExtensionFactory)
+Host.extensionFactories.push(textExtensionFactory)
 
-declare module '../core/environment' {
+declare module '../core/host' {
   interface Extensions {
     text: TextExtension
   }

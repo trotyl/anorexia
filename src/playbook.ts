@@ -1,12 +1,12 @@
 import * as path from 'path'
 import * as shell from 'shelljs'
 
-import { create, Environment, WORKSPACE_ROOT_CONTAINER } from './core'
+import { createHost, Host, WORKSPACE_ROOT_CONTAINER } from './core'
 
 let dispatcher: Promise<void> = Promise.resolve()
 
 export interface Scenario {
-  (env: Environment): Promise<void> | void
+  (host: Host): Promise<void> | void
 }
 
 export interface Step {
@@ -32,6 +32,6 @@ export async function playbook(name: string, task: Scenario, projectRoot: string
   shell.mkdir(workspaceRoot)
   shell.cd(workspaceRoot)
 
-  await task(create(projectRoot))
+  await task(createHost(projectRoot))
   shell.echo('Playbook completed')
 }

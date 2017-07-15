@@ -1,8 +1,8 @@
 import * as shell from 'shelljs'
-import { Environment } from '../core'
+import { Host } from '../core'
 
 export class SystemExtension {
-  constructor(private env: Environment) { }
+  constructor(private host: Host) { }
 
   cd(dir: string): void {
     shell.cd(dir)
@@ -17,13 +17,13 @@ export class SystemExtension {
   }
 }
 
-export function systemExtensionFactory(env: Environment): void {
-  env.extensions.system = new SystemExtension(env)
+export function systemExtensionFactory(host: Host): void {
+  host.extensions.system = new SystemExtension(host)
 }
 
-Environment.extensionFactories.push(systemExtensionFactory)
+Host.extensionFactories.push(systemExtensionFactory)
 
-declare module '../core/environment' {
+declare module '../core/host' {
   interface Extensions {
     system: SystemExtension
   }
