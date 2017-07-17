@@ -1,6 +1,11 @@
+import * as path from 'path'
 import { Host, OnInit } from '../core'
 import { replaceContent } from '../utils'
 import { TextExtension } from './text'
+
+const templateUrlRegex = /templateUrl\s*:(\s*['"`](.*?)['"`]\s*)/gm;
+const stylesRegex = /styleUrls *:(\s*\[[^\]]*?\])/g;
+const stringRegex = /(['`"])((?:[^\\]\\\1|.)*?)\1/g;
 
 export interface PlatformServerOptions {
   modulePath: string,
@@ -10,7 +15,7 @@ export interface PlatformServerOptions {
   htmlPath: string,
 }
 
-export class AngularExtension implements OnInit {
+export class AngularExtension {
   readonly packages = {
     animations: '@angular/animations',
     core: '@angular/core',
@@ -25,12 +30,6 @@ export class AngularExtension implements OnInit {
   private platformServerOptions: PlatformServerOptions | null = null
 
   constructor(private host: Host) { }
-
-  onInit(): void {
-    this.host.setUpFiles({
-      [`../../fixtures/server.module.js`]: `__server.module.js`
-    }, __dirname)
-  }
 
   get text(): TextExtension {
     return this.host.extensions.text
@@ -48,8 +47,20 @@ export class AngularExtension implements OnInit {
       [/imports\s*?:\s*?\[([\s\S\n]*?)BrowserModule,?([\s\S\n]*?)\]/g, `imports: \[$1${replacement},$2\]`]
     )
   }
+
+  inline(...filepaths: string[]) {
+    filepaths.forEach(filepath => {
+      const content = this.host.readWorkspaceFile(filepath)
+      const inlinedContent = this.processInline(content, filepath)
+      this.host.writeWorkspaceFile(filepath, inlinedContent)
+    })
+  }
   
   renderToHtml(): Promise<string> {
+    this.host.setUpFiles({
+      [`../../fixtures/server.module.js`]: `__server.module.js`
+    }, __dirname)
+    
     if (!this.platformServerOptions) {
       throw new Error('PlatformServerOptions is not provided!')
     }
@@ -67,6 +78,29 @@ export class AngularExtension implements OnInit {
 
   usePlatformServer(options: PlatformServerOptions) {
     this.platformServerOptions = options
+  }
+
+  private processInline(content: string, filename: string) {
+    return content.replace(templateUrlRegex, (match, quote, url) => {
+      const templatePath = path.join(path.dirname(filename), url)
+      const templateContent = this.host.readWorkspaceFile(templatePath)
+      const escapedTemplateContent = templateContent.replace('`', '\\`')
+      
+      return `template: \`${escapedTemplateContent}\``
+    }).replace(stylesRegex, (match, relativeUrls) => {
+      const styles = [];
+      let stringMatch: RegExpExecArray | null
+
+      while ((stringMatch = stringRegex.exec(relativeUrls)) !== null) {
+        const styleUrl = stringMatch[2]
+        const stylePath = path.join(path.dirname(filename), styleUrl)
+        const styleContent = this.host.readWorkspaceFile(stylePath)
+        const escapedStyleContent = styleContent.replace('`', '\\`')
+        styles.push(`\`${escapedStyleContent}\``)
+      }
+
+      return `styles: [${styles.join(', ')}]`;
+    })
   }
 }
 

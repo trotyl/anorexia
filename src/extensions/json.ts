@@ -4,10 +4,12 @@ import { Host } from '../core'
 export class JsonExtension {
   constructor(private host: Host) { }
 
-  modify(filepath: string, partial: Object): void {
+  modify(filepath: string, change: object): void
+  modify(filepath: string, change: (obj: object) => object): void
+  modify(filepath: string, change: object | ((obj: object) => object)): void {
     const json = this.host.readWorkspaceFile(filepath)
     const originalObj = JSON.parse(json)
-    const modifiedObj = _.merge(originalObj, partial)
+    const modifiedObj = typeof change === 'function' ? change(originalObj) : _.merge(originalObj, change)
     const modifiedJson = JSON.stringify(modifiedObj)
     this.host.writeWorkspaceFile(filepath, modifiedJson)
   }
