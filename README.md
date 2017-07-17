@@ -27,32 +27,34 @@ Create a playbook:
 import { playbook, stage } from 'anorexia'
 import { assert } from 'chai'
 
-playbook('playbook-name', async (env) => {
+playbook('playbook-name', async (host) => {
+
+  const { angular: ng, javascript: js, yarn, system, file, json } = host.extensions
   
   stage('installing dependencies example', () => {
-    env.install()
+    yarn.install()
   })
 
   stage('creating files example', () => {
-    // Copy files from ./fixtures to WORKSPACE
-    env.setUpFiles({
-      'main.ts': 'src/main.ts',
-      'tsconfig.json': 'tsconfig.json',
-      'package.json': 'package.json',
+    // Copy files from PROJECT to WORKSPACE
+    host.setUpFiles({
+      [`fixtures/main.ts`]: `src/main.ts`,
+      [`fixtures/tsconfig.json`]: `tsconfig.json`,
+      [`fixtures/package.json`]: `package.json`,
     })
   })
 
   stage('building example', () => {
-    env.exec('tsc -p .')
+    system.exec('tsc -p .')
   })
 
   stage('verifying example', () => {
-    assert.isTrue(env.fileExists('dist/main.js'))
+    assert.isTrue(file.exists('dist/main.js'))
   })
 
   stage('modifying example', () => {
-    env.removeFiles('dist/main.js')
-    env.modifyJson('tsconfig.json', {
+    file.remove('dist/main.js')
+    json.modify('tsconfig.json', {
       compilerOptions: {
         outDir: 'target'
       }
@@ -60,20 +62,20 @@ playbook('playbook-name', async (env) => {
   })
 
   stage('verifying example', () => {
-    assert.isTrue(env.fileExists('target/main.js'))
+    assert.isTrue(file.exists('target/main.js'))
   })
 
   stage('replacing example', () => {
-    env.replaceInFile('dist/main.js',
+    file.replaceInFile('dist/main.js',
       [`environment.production`, 'true'],
       [`debugger`, ''],
     )
   })
 
   await stage('verifying Angular app example', () => {
-    const html = await env.renderToHtml()
+    const html = await ng.renderToHtml()
     assert.match(html, /Hello Angular/)
-    env.echo('app works!')
+    system.echo('app works!')
   })
 
 }, __dirname)
